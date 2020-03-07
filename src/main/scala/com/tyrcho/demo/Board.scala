@@ -42,7 +42,9 @@ import slinky.web.html._
 
   def renderSquare(i: Int) = Square(state.squares(i), () => handleClick(i))
 
-  def handleClick(i: Int) = setState(state.play(i))
+  def handleClick(i: Int) =
+    if (state.winner.isEmpty && state.squares(i) == i.toString)
+      setState(state.play(i))
 
   def render = {
     div(
