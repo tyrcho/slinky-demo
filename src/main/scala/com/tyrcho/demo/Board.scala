@@ -8,18 +8,28 @@ import slinky.web.html._
 @react class Board extends Component {
   type Props = Unit // no props
 
-  case class State(squares: Vector[String])
+  case class State(
+                    squares: Vector[String] = Vector.tabulate(9)(_.toString),
+                    xIsNext: Boolean = true
+                  ) {
 
-  override def initialState: State
-  = State(Vector.tabulate(9)(_.toString))
+    def next: String = if (xIsNext) "X" else "O"
+
+    def play(i: Int): State = State(
+      squares = squares.updated(i, next),
+      xIsNext = !xIsNext
+    )
+  }
+
+  override def initialState: State = State()
 
   def renderSquare(i: Int) = Square(state.squares(i), () => handleClick(i))
 
-  def handleClick(i: Int) = setState(State(state.squares.updated(i, "X")))
+  def handleClick(i: Int) = setState(state.play(i))
 
   def render = {
     div(
-      div(className := "status")("Next player: X"),
+      div(className := "status")(s"Next player: ${state.next}"),
       div(className := "board-row")(
         renderSquare(0),
         renderSquare(1),
