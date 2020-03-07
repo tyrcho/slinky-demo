@@ -4,12 +4,14 @@ import slinky.core.Component
 import slinky.core.annotations.react
 import slinky.web.html._
 
+
 @react class Board extends Component {
   type Props = Unit // no props
 
   case class State(squares: Vector[String])
 
-  override def initialState: State = State(Vector.tabulate(9)(_.toString))
+  override def initialState: State
+  = State(Vector.tabulate(9)(_.toString))
 
   def renderSquare(i: Int) = Square(state.squares(i), () => handleClick(i))
 
