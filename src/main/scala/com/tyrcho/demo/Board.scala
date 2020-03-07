@@ -1,13 +1,19 @@
 package com.tyrcho.demo
 
-import slinky.core.StatelessComponent
+import slinky.core.Component
 import slinky.core.annotations.react
 import slinky.web.html._
 
-@react class Board extends StatelessComponent {
+@react class Board extends Component {
   type Props = Unit // no props
 
-  def renderSquare(i: Int) = Square(i)
+  case class State(squares: Vector[String])
+
+  override def initialState: State = State(Vector.tabulate(9)(_.toString))
+
+  def renderSquare(i: Int) = Square(state.squares(i), () => handleClick(i))
+
+  def handleClick(i: Int) = setState(State(state.squares.updated(i, "X")))
 
   def render = {
     div(
