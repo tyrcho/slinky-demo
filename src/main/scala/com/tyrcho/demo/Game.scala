@@ -13,14 +13,23 @@ class Game extends Component {
   case class State(
                     history: List[Vector[String]] = List(Vector.tabulate(9)(_.toString)),
                     xIsNext: Boolean = true,
+                    stepNumber: Int = 0
                   ) {
 
-    def next: String = if (xIsNext) "X" else "O"
+    def next: String = if (stepNumber % 2 == 0) "X" else "O"
 
-    def play(i: Int): State = State(
-      history = history.head.updated(i, next) :: history,
-      xIsNext = !xIsNext
-    )
+    def current: Vector[String] = history.reverse(stepNumber)
+
+    def play(i: Int): State = {
+      val board = current.updated(i, next)
+      State(
+        history = board :: history.takeRight(stepNumber + 1),
+        xIsNext = !xIsNext,
+        stepNumber = stepNumber + 1
+      )
+    }
+
+    def jumpTo(i: Int): State = copy(stepNumber = i)
 
     def winner: Option[String] = {
       val lines = Seq(
@@ -33,9 +42,8 @@ class Game extends Component {
         Seq(0, 4, 8),
         Seq(2, 4, 6),
       )
-      val squares = history.head
       lines
-        .collect { case line if line.map(squares).distinct.size == 1 => squares(line.head) }
+        .collect { case line if line.map(current).distinct.size == 1 => current(line.head) }
         .headOption
 
     }
@@ -43,15 +51,26 @@ class Game extends Component {
   }
 
   def handleClick(i: Int) =
-    if (state.winner.isEmpty && state.history.head(i) == i.toString)
+    if (state.winner.isEmpty && state.current(i) == i.toString)
       setState(state.play(i))
 
+  def jump(i: Int): Unit =
+    setState(state.jumpTo(i))
 
   def render = {
     div(className := "game")(
       div(className := "game-board")(
-        Board(state.history.head, handleClick, state.next, state.winner)
+        Board(state.current, handleClick, state.next, state.winner)
       ),
+      div(className := "game-info")(
+        ol(
+          (0 to state.stepNumber).map { i =>
+            li(key := i.toString)(
+              button(onClick := (_ => jump(i)))(
+                if (i == 0) "debut" else s"tour #$i"))
+          }
+        )
+      )
     )
   }
 }
