@@ -1,14 +1,22 @@
 package com.tyrcho.demo
 
-import slinky.core.StatelessComponent
+import slinky.core.Component
 import slinky.core.annotations.react
-import slinky.web.html.{button, className}
+import slinky.web.html._
 
-@react class Square extends StatelessComponent {
+@react class Square extends Component {
 
   case class Props(value: Int)
 
+  case class State(value: String)
+
+  override def initialState: State = State(props.value.toString)
+
   def render = {
-    button(className := "square")(props.value)
+    button(
+      onClick := (_ => setState(State("X")))
+    )(
+      state.value
+    )
   }
 }
