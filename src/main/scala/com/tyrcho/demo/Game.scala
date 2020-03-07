@@ -11,10 +11,10 @@ class Game extends Component {
   override def initialState: State = State()
 
   case class State(
-                    history: List[Vector[String]] = List(Vector.tabulate(9)(_.toString)),
-                    xIsNext: Boolean = true,
-                    stepNumber: Int = 0
-                  ) {
+      history: List[Vector[String]] = List(Vector.tabulate(9)(_.toString)),
+      xIsNext: Boolean = true,
+      stepNumber: Int = 0
+  ) {
 
     def next: String = if (stepNumber % 2 == 0) "X" else "O"
 
@@ -40,11 +40,11 @@ class Game extends Component {
         Seq(1, 4, 7),
         Seq(2, 5, 8),
         Seq(0, 4, 8),
-        Seq(2, 4, 6),
+        Seq(2, 4, 6)
       )
-      lines
-        .collect { case line if line.map(current).distinct.size == 1 => current(line.head) }
-        .headOption
+      lines.collect {
+        case line if line.map(current).distinct.size == 1 => current(line.head)
+      }.headOption
 
     }
 
@@ -67,7 +67,10 @@ class Game extends Component {
           (0 to state.stepNumber).map { i =>
             li(key := i.toString)(
               button(onClick := (_ => jump(i)))(
-                if (i == 0) "debut" else s"tour #$i"))
+                if (i == 0) "debut"
+                else s"tour #$i"
+              )
+            )
           }
         )
       )

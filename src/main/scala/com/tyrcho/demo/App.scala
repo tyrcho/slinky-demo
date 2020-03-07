@@ -26,5 +26,3 @@ object ReactLogo extends js.Object
     )
   }
 }
-
-

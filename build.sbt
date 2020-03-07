@@ -2,7 +2,7 @@ enablePlugins(ScalaJSBundlerPlugin)
 
 name := "slinky-demo"
 
-scalaVersion := "2.12.10"
+scalaVersion := "2.12.8"
 
 npmDependencies in Compile += "react" -> "16.8.6"
 npmDependencies in Compile += "react-dom" -> "16.8.6"

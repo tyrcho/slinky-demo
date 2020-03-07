@@ -12,7 +12,7 @@ object Square {
   val component = FunctionalComponent[Props] { props =>
     button(
       className := "square",
-      onClick := (_ => props.handleClick()),
+      onClick := (_ => props.handleClick())
     )(
       props.value
     )
