@@ -7,7 +7,7 @@ import slinky.web.html._
 @react class Board extends StatelessComponent {
   type Props = Unit // no props
 
-  def renderSquare(i: Int) = Square()
+  def renderSquare(i: Int) = Square(i)
 
   def render = {
     div(

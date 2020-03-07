@@ -5,9 +5,10 @@ import slinky.core.annotations.react
 import slinky.web.html.{button, className}
 
 @react class Square extends StatelessComponent {
-  type Props = Unit // no props
+
+  case class Props(value: Int)
 
   def render = {
-    button(className := "square")
+    button(className := "square")(props.value)
   }
 }
