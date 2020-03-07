@@ -19,6 +19,23 @@ import slinky.web.html._
       squares = squares.updated(i, next),
       xIsNext = !xIsNext
     )
+
+    def winner: Option[String] = {
+      val lines = Seq(
+        Seq(0, 1, 2),
+        Seq(3, 4, 5),
+        Seq(6, 7, 8),
+        Seq(0, 3, 6),
+        Seq(1, 4, 7),
+        Seq(2, 5, 8),
+        Seq(0, 4, 8),
+        Seq(2, 4, 6),
+      )
+      lines
+        .collect { case line if line.map(squares).distinct.size == 1 => squares(line.head) }
+        .headOption
+
+    }
   }
 
   override def initialState: State = State()
@@ -29,7 +46,8 @@ import slinky.web.html._
 
   def render = {
     div(
-      div(className := "status")(s"Next player: ${state.next}"),
+      div(className := "status")(
+        state.winner.fold(s"Next player: ${state.next}")(w => s"$w has won")),
       div(className := "board-row")(
         renderSquare(0),
         renderSquare(1),
