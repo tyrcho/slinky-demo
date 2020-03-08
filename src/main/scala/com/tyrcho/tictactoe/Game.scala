@@ -20,14 +20,16 @@ class Game extends Component {
 
     def current: BoardState = history.reverse(stepNumber)
 
-    def play(i: Int): State = {
+    def maxStep: Int = history.size
+
+    def play(i: Int): State =
       State(
-        history = history.head.play(i) :: history.takeRight(stepNumber + 1),
+        history = current.play(i) :: history.takeRight(stepNumber + 1),
         stepNumber = stepNumber + 1
       )
-    }
 
-    def jumpTo(i: Int): State = copy(stepNumber = i)
+    def jumpTo(i: Int): State =
+      copy(stepNumber = i)
   }
 
   def handleClick(i: Int) =
@@ -50,7 +52,7 @@ class Game extends Component {
 
   private def renderHistory =
     ol(
-      (0 to state.stepNumber).map { i =>
+      (0 until state.maxStep).map { i =>
         li(key := i.toString)(
           button(onClick := (_ => jump(i)))(
             if (i == 0) "debut"
