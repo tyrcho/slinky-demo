@@ -6,3 +6,5 @@ case class CellState(x: Option[Boolean]) {
 
   def isEmpty: Boolean = x.isEmpty
 }
+
+

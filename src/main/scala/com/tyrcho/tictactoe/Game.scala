@@ -1,6 +1,6 @@
 package com.tyrcho.tictactoe
 
-import com.tyrcho.tictactoe.domain.CellState
+import com.tyrcho.tictactoe.domain.BoardState
 import slinky.core.Component
 import slinky.core.annotations.react
 import slinky.web.html._
@@ -12,51 +12,26 @@ class Game extends Component {
   override def initialState: State = State()
 
   case class State(
-                    history: List[Vector[CellState]] = List(Vector.fill(9)(CellState(None))),
-                    xIsNext: Boolean = true,
+                    history: List[BoardState] = List(BoardState()),
                     stepNumber: Int = 0
                   ) {
 
-    def nextIsX: Boolean = stepNumber % 2 == 0
+    def nextIsX: Boolean = history(stepNumber).xIsNext
 
-    def current: Vector[CellState] = history.reverse(stepNumber)
+    def current: BoardState = history.reverse(stepNumber)
 
     def play(i: Int): State = {
-      val board = current.updated(i, CellState(Some(nextIsX)))
       State(
-        history = board :: history.takeRight(stepNumber + 1),
-        xIsNext = !xIsNext,
+        history = history.head.play(i) :: history.takeRight(stepNumber + 1),
         stepNumber = stepNumber + 1
       )
     }
 
     def jumpTo(i: Int): State = copy(stepNumber = i)
-
-    def winner: CellState = {
-      val lines = Seq(
-        Seq(0, 1, 2),
-        Seq(3, 4, 5),
-        Seq(6, 7, 8),
-        Seq(0, 3, 6),
-        Seq(1, 4, 7),
-        Seq(2, 5, 8),
-        Seq(0, 4, 8),
-        Seq(2, 4, 6)
-      )
-      lines
-        .find { line =>
-          line.map(current).distinct.size == 1
-        }.map(line => current(line.head))
-      match {
-        case None => CellState(None)
-        case Some(cs) => cs
-      }
-    }
-
   }
 
   def handleClick(i: Int) =
-    if (state.winner.isEmpty && state.current(i).isEmpty)
+    if (state.current.canPlay(i))
       setState(state.play(i))
 
   def jump(i: Int): Unit =
@@ -65,20 +40,24 @@ class Game extends Component {
   def render = {
     div(className := "game")(
       div(className := "game-board")(
-        Board(state.current, handleClick, state.nextIsX, state.winner)
+        Board(state.current, handleClick)
       ),
       div(className := "game-info")(
-        ol(
-          (0 to state.stepNumber).map { i =>
-            li(key := i.toString)(
-              button(onClick := (_ => jump(i)))(
-                if (i == 0) "debut"
-                else s"tour #$i"
-              )
-            )
-          }
-        )
+        renderHistory
       )
     )
   }
+
+  private def renderHistory =
+    ol(
+      (0 to state.stepNumber).map { i =>
+        li(key := i.toString)(
+          button(onClick := (_ => jump(i)))(
+            if (i == 0) "debut"
+            else s"tour #$i"
+          )
+        )
+      }
+    )
+
 }

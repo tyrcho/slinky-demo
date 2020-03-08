@@ -1,6 +1,6 @@
 package com.tyrcho.tictactoe
 
-import com.tyrcho.tictactoe.domain.CellState
+import com.tyrcho.tictactoe.domain.BoardState
 import slinky.core.StatelessComponent
 import slinky.core.annotations.react
 import slinky.web.html.{className, div}
@@ -9,19 +9,20 @@ import slinky.web.html.{className, div}
 class Board extends StatelessComponent {
 
   case class Props(
-                    squares: Vector[CellState],
+                    boardState: BoardState,
                     handleClick: Int => Unit,
-                    nextIsX: Boolean,
-                    winner: CellState
                   )
 
   def renderSquare(i: Int) =
-    Square(props.squares(i), () => props.handleClick(i))
+    Square(props.boardState.cells(i), () => props.handleClick(i))
 
   def render = {
     div(
       div(className := "status")(
-        props.winner.x.fold(s"Next player: ${if (props.nextIsX) "X" else "O"}")(_ => s"${props.winner} has won")
+        props.boardState.winner.x match {
+          case None => s"Next player: ${if (props.boardState.xIsNext) "X" else "O"}"
+          case Some(_) => s"${props.boardState.winner} has won"
+        }
       ),
       div(className := "board-row")(
         renderSquare(0),
