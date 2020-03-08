@@ -1,9 +1,9 @@
 package com.tyrcho.tictactoe.domain
 
 case class BoardState(
-    cells: Vector[CellState] = Vector.fill(9)(CellState(None)),
-    turn: Int = 0
-) {
+                       cells: Vector[CellState] = Vector.fill(9)(CellState(None)),
+                       turn: Int = 0
+                     ) {
 
   def canPlay(i: Int): Boolean =
     cells(i).isEmpty && winner.isEmpty
@@ -27,13 +27,19 @@ case class BoardState(
       Seq(0, 4, 8),
       Seq(2, 4, 6)
     )
-    lines
-      .find { line =>
-        line.map(cells).distinct.size == 1
-      }
-      .map(line => cells(line.head)) match {
-      case None     => CellState(None)
-      case Some(cs) => cs
+
+    def winningLine(line: Seq[Int]): Option[Boolean] = {
+      val head = cells(line.head)
+      if (line.forall(i => cells(i) == head))
+        head.x
+      else None
     }
+
+
+    lines
+      .map(winningLine)
+      .find(_.isDefined)
+      .flatten
+      .fold(CellState(None))(w => CellState(Some(w)))
   }
 }
