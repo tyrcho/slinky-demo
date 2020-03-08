@@ -9,9 +9,9 @@ import slinky.web.html.{className, div}
 class Board extends StatelessComponent {
 
   case class Props(
-                    boardState: BoardState,
-                    handleClick: Int => Unit,
-                  )
+      boardState: BoardState,
+      handleClick: Int => Unit
+  )
 
   def renderSquare(i: Int) =
     Square(props.boardState.cells(i), () => props.handleClick(i))
@@ -20,7 +20,8 @@ class Board extends StatelessComponent {
     div(
       div(className := "status")(
         props.boardState.winner.x match {
-          case None => s"Next player: ${if (props.boardState.xIsNext) "X" else "O"}"
+          case None =>
+            s"Next player: ${if (props.boardState.xIsNext) "X" else "O"}"
           case Some(_) => s"${props.boardState.winner} has won"
         }
       ),

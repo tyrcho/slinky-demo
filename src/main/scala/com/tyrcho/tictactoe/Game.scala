@@ -1,6 +1,6 @@
 package com.tyrcho.tictactoe
 
-import com.tyrcho.tictactoe.domain.BoardState
+import com.tyrcho.tictactoe.domain.{BoardState, GameWithHistory}
 import slinky.core.Component
 import slinky.core.annotations.react
 import slinky.web.html._
@@ -11,33 +11,26 @@ class Game extends Component {
 
   override def initialState: State = State()
 
-  case class State(
-                    history: List[BoardState] = List(BoardState()),
-                    stepNumber: Int = 0
-                  ) {
+  case class State(gameWithHistory: GameWithHistory = GameWithHistory()) {
 
-    def nextIsX: Boolean = history(stepNumber).xIsNext
+    def nextIsX: Boolean = gameWithHistory.nextIsX
 
-    def current: BoardState = history.reverse(stepNumber)
+    def current: BoardState = gameWithHistory.current
 
-    def maxStep: Int = history.size
+    def maxStep: Int = gameWithHistory.maxStep
 
     def play(i: Int): State =
-      State(
-        history = current.play(i) :: history.takeRight(stepNumber + 1),
-        stepNumber = stepNumber + 1
-      )
+      State(gameWithHistory = gameWithHistory.play(i))
 
     def jumpTo(i: Int): State =
-      copy(stepNumber = i)
+      State(gameWithHistory.jumpTo(i))
+
+    def canPlay(i: Int): Boolean = gameWithHistory.current.canPlay(i)
   }
 
   def handleClick(i: Int) =
-    if (state.current.canPlay(i))
+    if (state.canPlay(i))
       setState(state.play(i))
-
-  def jump(i: Int): Unit =
-    setState(state.jumpTo(i))
 
   def render = {
     div(className := "game")(
@@ -54,7 +47,9 @@ class Game extends Component {
     ol(
       (0 until state.maxStep).map { i =>
         li(key := i.toString)(
-          button(onClick := (_ => jump(i)))(
+          button(
+            onClick := (_ => setState(_.jumpTo(i)))
+          )(
             if (i == 0) "debut"
             else s"tour #$i"
           )

@@ -1,12 +1,12 @@
 package com.tyrcho.tictactoe.domain
 
 case class BoardState(
-                       cells: Vector[CellState] = Vector.fill(9)(CellState(None)),
-                       turn: Int = 0
-                     ) {
+    cells: Vector[CellState] = Vector.fill(9)(CellState(None)),
+    turn: Int = 0
+) {
+
   def canPlay(i: Int): Boolean =
     cells(i).isEmpty && winner.isEmpty
-
 
   def xIsNext: Boolean = turn % 2 == 0
 
@@ -30,9 +30,9 @@ case class BoardState(
     lines
       .find { line =>
         line.map(cells).distinct.size == 1
-      }.map(line => cells(line.head))
-    match {
-      case None => CellState(None)
+      }
+      .map(line => cells(line.head)) match {
+      case None     => CellState(None)
       case Some(cs) => cs
     }
   }
