@@ -27,6 +27,19 @@ ol, ul {
   margin-bottom: 10px;
 }
 
+.board-won {
+  background: #fff;
+  border: 1px solid #999;
+  float: left;
+  font-size: 72px;
+  font-weight: bold;
+  margin-top: -1px;
+  padding: 0;
+  text-align: center;
+  height: 100px;
+  width: 100px;
+}
+
 .square {
   background: #fff;
   border: 1px solid #999;
