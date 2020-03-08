@@ -1,6 +1,6 @@
 package com.tyrcho.tictactoe
 
-import com.tyrcho.tictactoe.domain.{BoardState, GameWithHistory}
+import com.tyrcho.tictactoe.domain.{BoardState, CellState, GameWithHistory}
 import slinky.core.Component
 import slinky.core.annotations.react
 import slinky.web.html._
@@ -22,6 +22,8 @@ class Game extends Component {
     def play(i: Int): State =
       State(gameWithHistory = gameWithHistory.play(i))
 
+    def winner: CellState = current.winner
+
     def jumpTo(i: Int): State =
       State(gameWithHistory.jumpTo(i))
 
@@ -38,6 +40,15 @@ class Game extends Component {
         Board(state.current, handleClick)
       ),
       div(className := "game-info")(
+        div(className := "status")(
+          h1(
+            state.winner.x match {
+              case None =>
+                s"Next player: ${if (state.nextIsX) "X" else "O"}"
+              case Some(_) => s"${state.winner} has won"
+            }
+          )
+        ),
         renderHistory
       )
     )
@@ -48,7 +59,8 @@ class Game extends Component {
       (0 until state.maxStep).map { i =>
         li(key := i.toString)(
           button(
-            onClick := (_ => setState(_.jumpTo(i)))
+            onClick := (_ => setState(_.jumpTo(i))),
+            className := (if (i == state.gameWithHistory.currentTurn) "history-selected" else "history")
           )(
             if (i == 0) "debut"
             else s"tour #$i"

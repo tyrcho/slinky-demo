@@ -18,13 +18,6 @@ class Board extends StatelessComponent {
 
   def render = {
     div(
-      div(className := "status")(
-        props.boardState.winner.x match {
-          case None =>
-            s"Next player: ${if (props.boardState.xIsNext) "X" else "O"}"
-          case Some(_) => s"${props.boardState.winner} has won"
-        }
-      ),
       div(className := "board-row")(
         renderSquare(0),
         renderSquare(1),

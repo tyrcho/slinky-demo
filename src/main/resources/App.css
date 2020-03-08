@@ -13,6 +13,16 @@ ol, ul {
   display: table;
 }
 
+.history {
+  width: 70px;
+}
+
+.history-selected {
+  font-weight: bold;
+  cursor: not-allowed;
+  width: 70px;
+}
+
 .status {
   margin-bottom: 10px;
 }
