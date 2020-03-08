@@ -1,17 +1,19 @@
-package com.tyrcho.demo
+package com.tyrcho.tictactoe
 
+import com.tyrcho.tictactoe.domain.CellState
 import slinky.core.StatelessComponent
 import slinky.core.annotations.react
-import slinky.web.html._
+import slinky.web.html.{className, div}
+
 @react
 class Board extends StatelessComponent {
 
   case class Props(
-      squares: Vector[String],
-      handleClick: Int => Unit,
-      next: String,
-      winner: Option[String]
-  )
+                    squares: Vector[CellState],
+                    handleClick: Int => Unit,
+                    nextIsX: Boolean,
+                    winner: CellState
+                  )
 
   def renderSquare(i: Int) =
     Square(props.squares(i), () => props.handleClick(i))
@@ -19,7 +21,7 @@ class Board extends StatelessComponent {
   def render = {
     div(
       div(className := "status")(
-        props.winner.fold(s"Next player: ${props.next}")(w => s"$w has won")
+        props.winner.x.fold(s"Next player: ${if (props.nextIsX) "X" else "O"}")(_ => s"${props.winner} has won")
       ),
       div(className := "board-row")(
         renderSquare(0),

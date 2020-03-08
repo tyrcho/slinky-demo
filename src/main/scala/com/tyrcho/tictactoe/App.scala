@@ -1,4 +1,4 @@
-package com.tyrcho.demo
+package com.tyrcho.tictactoe
 
 import slinky.core._
 import slinky.core.annotations.react

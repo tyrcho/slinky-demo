@@ -2,7 +2,6 @@ package com.tyrcho.demo
 
 import slinky.web.ReactDOM
 import org.scalajs.dom.document
-
 import org.scalatest.FunSuite
 
 class AppTest extends FunSuite {

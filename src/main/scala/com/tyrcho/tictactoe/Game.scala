@@ -1,5 +1,6 @@
-package com.tyrcho.demo
+package com.tyrcho.tictactoe
 
+import com.tyrcho.tictactoe.domain.CellState
 import slinky.core.Component
 import slinky.core.annotations.react
 import slinky.web.html._
@@ -11,17 +12,17 @@ class Game extends Component {
   override def initialState: State = State()
 
   case class State(
-      history: List[Vector[String]] = List(Vector.tabulate(9)(_.toString)),
-      xIsNext: Boolean = true,
-      stepNumber: Int = 0
-  ) {
+                    history: List[Vector[CellState]] = List(Vector.fill(9)(CellState(None))),
+                    xIsNext: Boolean = true,
+                    stepNumber: Int = 0
+                  ) {
 
-    def next: String = if (stepNumber % 2 == 0) "X" else "O"
+    def nextIsX: Boolean = stepNumber % 2 == 0
 
-    def current: Vector[String] = history.reverse(stepNumber)
+    def current: Vector[CellState] = history.reverse(stepNumber)
 
     def play(i: Int): State = {
-      val board = current.updated(i, next)
+      val board = current.updated(i, CellState(Some(nextIsX)))
       State(
         history = board :: history.takeRight(stepNumber + 1),
         xIsNext = !xIsNext,
@@ -31,7 +32,7 @@ class Game extends Component {
 
     def jumpTo(i: Int): State = copy(stepNumber = i)
 
-    def winner: Option[String] = {
+    def winner: CellState = {
       val lines = Seq(
         Seq(0, 1, 2),
         Seq(3, 4, 5),
@@ -42,16 +43,20 @@ class Game extends Component {
         Seq(0, 4, 8),
         Seq(2, 4, 6)
       )
-      lines.collect {
-        case line if line.map(current).distinct.size == 1 => current(line.head)
-      }.headOption
-
+      lines
+        .find { line =>
+          line.map(current).distinct.size == 1
+        }.map(line => current(line.head))
+      match {
+        case None => CellState(None)
+        case Some(cs) => cs
+      }
     }
 
   }
 
   def handleClick(i: Int) =
-    if (state.winner.isEmpty && state.current(i) == i.toString)
+    if (state.winner.isEmpty && state.current(i).isEmpty)
       setState(state.play(i))
 
   def jump(i: Int): Unit =
@@ -60,7 +65,7 @@ class Game extends Component {
   def render = {
     div(className := "game")(
       div(className := "game-board")(
-        Board(state.current, handleClick, state.next, state.winner)
+        Board(state.current, handleClick, state.nextIsX, state.winner)
       ),
       div(className := "game-info")(
         ol(

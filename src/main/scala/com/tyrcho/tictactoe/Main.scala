@@ -1,14 +1,11 @@
-package com.tyrcho.demo
-
-import scala.scalajs.js
-import scala.scalajs.js.annotation.{JSExportTopLevel, JSImport}
-import scala.scalajs.LinkingInfo
-
-import slinky.core._
-import slinky.web.ReactDOM
-import slinky.hot
+package com.tyrcho.tictactoe
 
 import org.scalajs.dom
+import slinky.hot
+import slinky.web.ReactDOM
+
+import scala.scalajs.js.annotation.{JSExportTopLevel, JSImport}
+import scala.scalajs.{LinkingInfo, js}
 
 @JSImport("resources/index.css", JSImport.Default)
 @js.native
